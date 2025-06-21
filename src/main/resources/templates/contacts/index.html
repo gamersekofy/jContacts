@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: html">
+<head>
+  <title>Contact List</title>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="d-flex justify-content-between mb-4">
+    <h2 th:text="${searchTerm != null} ?
+                'Search Results for &quot;' + ${searchTerm} + '&quot;' :
+                'All Contacts'">All Contacts</h2>
+    <a th:href="@{/contacts/new}" class="btn btn-primary">
+      <i class="bi bi-plus-circle"></i> Add Contact
+    </a>
+  </div>
+
+  <div th:if="${#lists.isEmpty(contacts)}">
+    <div class="alert alert-info">
+                <span th:text="${searchTerm != null} ?
+                    'No contacts found for &quot;' + ${searchTerm} + '&quot;' :
+                    'No contacts found'">No contacts found</span>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="col" th:each="contact : ${contacts}">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <div class="contact-photo">
+                            <span class="initials"
+                                  th:text="${#strings.substring(contact.firstName,0,1)} +
+                                           ${contact.lastName != null} ?
+                                           ${#strings.substring(contact.lastName,0,1)} : ''">
+                                JD
+                            </span>
+          </div>
+          <h5 class="card-title"
+              th:text="${contact.firstName} + ' ' + ${contact.lastName}">
+            John Doe
+          </h5>
+          <div class="card-text">
+            <div th:if="${contact.email}">
+              <i class="bi bi-envelope"></i>
+              <span th:text="${contact.email}">john@example.com</span>
+            </div>
+            <div th:if="${contact.phone}">
+              <i class="bi bi-telephone"></i>
+              <span th:text="${contact.phone}">+1 (555) 123-4567</span>
+            </div>
+            <div th:if="${contact.company}">
+              <i class="bi bi-building"></i>
+              <span th:text="${contact.company}">Acme Inc</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0">
+          <div class="d-flex justify-content-center gap-2">
+            <a th:href="@{/contacts/{id}(id=${contact.id})}"
+               class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-eye"></i> View
+            </a>
+            <a th:href="@{/contacts/{id}/edit(id=${contact.id})}"
+               class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-pencil"></i> Edit
+            </a>
+            <form th:action="@{/contacts/{id}/delete(id=${contact.id})}"
+                  method="post" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
